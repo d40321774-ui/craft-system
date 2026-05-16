@@ -56,7 +56,6 @@ const CRAFT_DATABASE = {
   }
 };
 
-
 const prices = {
     "Залізна руда": 1.5,
     "Вугілля": 0.5,
@@ -71,7 +70,7 @@ const prices = {
     "Знеболювальне": 5.0
 };
 
-
+// DOM Елементи інтерфейсу
 const priceListEl = document.getElementById('price-list');
 const categorySelect = document.getElementById('category-select');
 const categoryToggle = document.getElementById('category-toggle');
@@ -90,6 +89,12 @@ const warehouseItemName = document.getElementById('warehouse-item-name');
 const warehouseItemQty = document.getElementById('warehouse-item-qty');
 const warehouseAddItemBtn = document.getElementById('warehouse-add-item');
 
+// DOM Елементи для створення кастомних рецептів (додано оголошення)
+const newRecipeName = document.getElementById('new-recipe-name');
+const newRecipeType = document.getElementById('new-recipe-type');
+const newRecipeIngredients = document.getElementById('new-recipe-ingredients');
+const newRecipeOutput = document.getElementById('new-recipe-output');
+
 const STORAGE_KEY = 'craft-calc-state';
 let selectedItems = [];
 let selectedItemsByCategory = {};
@@ -104,7 +109,7 @@ let customRecipes = {
 
 function getIconForText(text, category) {
     const lower = text.toLowerCase();
-    const weaponKeys = ['револьвер', 'карабін', 'дробовик', 'гвинтівка', 'зброяр', 'зброя', 'револьвер', 'пістолет', 'стріл'];
+    const weaponKeys = ['револьвер', 'карабін', 'дробовик', 'гвинтівка', 'зброяр', 'зброя', 'пістолет', 'стріл'];
     for (let key of weaponKeys) {
         if (lower.includes(key)) return '⚔';
     }
@@ -181,12 +186,10 @@ function loadState() {
     }
 
     mergeCustomRecipes();
-
     selectedItems = selectedItemsByCategory[categorySelect.value] || [];
 }
 
 function init() {
-    
     let progress = 0;
     const bar = document.getElementById('loading-bar');
     const text = document.getElementById('loading-text');
@@ -215,7 +218,8 @@ function init() {
         if (progress === 100) {
             clearInterval(interval);
             setTimeout(() => {
-                document.getElementById('loading-screen').classList.add('hidden');
+                const loadingScreen = document.getElementById('loading-screen');
+                if (loadingScreen) loadingScreen.classList.add('hidden');
             }, 500); 
         }
     }, 150);
@@ -229,7 +233,6 @@ function init() {
     updateSelectedItemsDisplay();
     calculate();
     
-    
     categoryToggle.addEventListener('change', () => {
         categorySelect.value = getActiveCategory();
         updateTheme();
@@ -240,26 +243,27 @@ function init() {
         saveState();
         calculate();
     });
-    itemSelect.addEventListener('change', () => {
-        updateSelectedItemsDisplay();
-        calculate();
-    });
 
-    document.getElementById('open-item-modal').addEventListener('click', openItemModal);
-    document.getElementById('close-modal').addEventListener('click', closeItemModal);
-    document.getElementById('open-warehouse-modal').addEventListener('click', openWarehouseModal);
-    document.getElementById('close-warehouse-modal').addEventListener('click', closeWarehouseModal);
-    warehouseAddItemBtn.addEventListener('click', (event) => {
+    if (itemSelect) {
+        itemSelect.addEventListener('change', () => {
+            updateSelectedItemsDisplay();
+            calculate();
+        });
+    }
+
+    // Безпечне підключення подій до кнопок модалок
+    document.getElementById('open-item-modal')?.addEventListener('click', openItemModal);
+    document.getElementById('close-modal')?.addEventListener('click', closeItemModal);
+    document.getElementById('open-warehouse-modal')?.addEventListener('click', openWarehouseModal);
+    document.getElementById('close-warehouse-modal')?.addEventListener('click', closeWarehouseModal);
+    warehouseAddItemBtn?.addEventListener('click', (event) => {
         event.preventDefault();
         addWarehouseItem();
     });
-
 }
 
-/ Знаходимо головний контейнер (можна замінити на body або потрібний клас)
+// Забороняємо виділення тексту на інтерфейсі калькулятора
 const interfaceContainer = document.body; 
-
-// Забороняємо виділення тексту через інлайнові стилі
 interfaceContainer.style.webkitUserSelect = "none";
 interfaceContainer.style.msUserSelect = "none";
 interfaceContainer.style.userSelect = "none";
@@ -272,8 +276,8 @@ function updateTheme() {
         document.body.className = "theme-weapon";
     }
 
-    document.getElementById('label-weapon').classList.toggle('active', cat !== 'Аптека');
-    document.getElementById('label-pharmacy').classList.toggle('active', cat === 'Аптека');
+    document.getElementById('label-weapon')?.classList.toggle('active', cat !== 'Аптека');
+    document.getElementById('label-pharmacy')?.classList.toggle('active', cat === 'Аптека');
 }
 
 function getActiveCategory() {
@@ -333,20 +337,20 @@ function updateSelectedItemsDisplay() {
 
 function openItemModal() {
     renderItemModalButtons();
-    itemModal.classList.remove('hidden');
+    itemModal?.classList.remove('hidden');
 }
 
 function closeItemModal() {
-    itemModal.classList.add('hidden');
+    itemModal?.classList.add('hidden');
 }
 
 function openWarehouseModal() {
     renderWarehouseModal();
-    warehouseModal.classList.remove('hidden');
+    warehouseModal?.classList.remove('hidden');
 }
 
 function closeWarehouseModal() {
-    warehouseModal.classList.add('hidden');
+    warehouseModal?.classList.add('hidden');
 }
 
 function renderWarehouseModal() {
@@ -378,7 +382,7 @@ function renderWarehouseItems() {
         const btnAdd = document.createElement('button');
         btnAdd.type = 'button';
         btnAdd.className = 'custom-btn warehouse-action-btn';
-        // btnAdd.textContent = 'Додати';
+        btnAdd.textContent = 'Додати';
 
         const btnRemove = document.createElement('button');
         btnRemove.type = 'button';
@@ -396,7 +400,6 @@ function renderWarehouseItems() {
 
         li.appendChild(itemText);
         li.appendChild(controlWrap);
-
         warehouseListEl.appendChild(li);
 
         const db = CRAFT_DATABASE[category];
@@ -409,9 +412,7 @@ function renderWarehouseItems() {
         btnAdd.addEventListener('click', () => {
             if (!selectedItems.some(sel => sel.name === item.name) && available) {
                 selectedItems.push({ name: item.name, qty: 1 });
-
                 selectedItemsByCategory[category] = selectedItems;
-
                 saveState();
                 updateSelectedItemsDisplay();
                 renderItemModalButtons();
@@ -421,20 +422,13 @@ function renderWarehouseItems() {
 
         btnRemove.addEventListener('click', () => {
             categoryWarehouse.splice(index, 1);
-
             warehouseItemsByCategory[category] = categoryWarehouse;
-
             saveState();
             renderWarehouseItems();
             calculate();
         });
 
-        // =========================
-        // РЕДАГУВАННЯ
-        // =========================
-
         btnEdit.addEventListener('click', () => {
-
             li.innerHTML = '';
             li.classList.add('warehouse-editing');
 
@@ -463,7 +457,6 @@ function renderWarehouseItems() {
             li.appendChild(cancelBtn);
 
             saveBtn.addEventListener('click', () => {
-
                 const newName = nameInput.value.trim();
                 const newQty = Math.max(1, parseInt(qtyInput.value, 10) || 1);
 
@@ -472,13 +465,8 @@ function renderWarehouseItems() {
                     return;
                 }
 
-                categoryWarehouse[index] = {
-                    name: newName,
-                    qty: newQty
-                };
-
+                categoryWarehouse[index] = { name: newName, qty: newQty };
                 warehouseItemsByCategory[category] = categoryWarehouse;
-
                 saveState();
                 renderWarehouseItems();
                 calculate();
@@ -493,6 +481,7 @@ function renderWarehouseItems() {
 
 function addWarehouseItem() {
     const category = categorySelect.value;
+    if (!warehouseItemName || !warehouseItemQty) return;
     const name = warehouseItemName.value.trim();
     const qty = parseInt(warehouseItemQty.value, 10) || 1;
     if (!name) return;
@@ -506,6 +495,7 @@ function addWarehouseItem() {
 }
 
 function addCustomRecipe() {
+    if (!newRecipeName || !newRecipeType || !newRecipeIngredients || !newRecipeOutput) return;
     const name = newRecipeName.value.trim();
     const type = newRecipeType.value;
     const ingredientsText = newRecipeIngredients.value.trim();
@@ -544,6 +534,7 @@ function mergeCustomRecipes() {
 
 function renderItemModalButtons() {
     const cat = categorySelect.value;
+    if (!modalItemGrid) return;
     modalItemGrid.innerHTML = '';
     const db = CRAFT_DATABASE[cat];
     if (!db) return;
@@ -633,8 +624,8 @@ function populateCategories() {
 
 function populateItems() {
     const cat = categorySelect.value;
+    if (!itemSelect || !CRAFT_DATABASE[cat]) return;
     itemSelect.innerHTML = '';
-    if (!CRAFT_DATABASE[cat]) return;
     
     const db = CRAFT_DATABASE[cat];
     const items = [...Object.keys(db.RECIPES), ...Object.keys(db.COMPONENTS)].sort((a, b) => a.localeCompare(b, 'uk'));
@@ -651,18 +642,17 @@ function populateItems() {
 
 function calculate() {
     const sheetName = categorySelect.value;
-    const quantity = 1;
 
     if (selectedItems.length === 0) {
-        totalCostEl.textContent = '$0.00';
-        missingPricesEl.textContent = '';
-        warehouseStatusEl.textContent = '';
-        directRecipeEl.textContent = '-';
-        deepRecipeEl.innerHTML = '';
+        if (totalCostEl) totalCostEl.textContent = '$0.00';
+        if (missingPricesEl) missingPricesEl.textContent = '';
+        if (warehouseStatusEl) warehouseStatusEl.textContent = '';
+        if (directRecipeEl) directRecipeEl.textContent = '-';
+        if (deepRecipeEl) deepRecipeEl.innerHTML = '';
         return;
     }
 
-    directRecipeEl.textContent = getDirectRecipeList(sheetName, selectedItems, 1);
+    if (directRecipeEl) directRecipeEl.textContent = getDirectRecipeList(sheetName, selectedItems, 1);
 
     let missing = [];
     let totalCost = 0;
@@ -670,32 +660,31 @@ function calculate() {
         totalCost += getDeepCost(sheetName, item.name, prices, missing) * item.qty;
     });
 
-    
     document.querySelectorAll('.price-item').forEach(el => el.classList.remove('error-highlight'));
 
     if (missing.length > 0) {
         let uniqueMissing = [...new Set(missing)];
-        totalCostEl.textContent = '---';
-        missingPricesEl.textContent = "⚠️ Немає цін: " + uniqueMissing.join(", ");
-        
+        if (totalCostEl) totalCostEl.textContent = '---';
+        if (missingPricesEl) missingPricesEl.textContent = "⚠️ Немає цін: " + uniqueMissing.join(", ");
         
         uniqueMissing.forEach(m => {
             let el = document.getElementById('price-item-' + m.replace(/\s+/g, '-'));
             if (el) el.classList.add('error-highlight');
         });
     } else {
-        totalCostEl.textContent = totalCost.toFixed(2);
-        missingPricesEl.textContent = '';
+        if (totalCostEl) totalCostEl.textContent = totalCost.toFixed(2);
+        if (missingPricesEl) missingPricesEl.textContent = '';
     }
 
     const deepData = getDeepFlatRecipeData(sheetName, selectedItems, 1);
     renderDeepRecipe(deepData);
 
     const warehouseAvailability = getWarehouseAvailability(sheetName, selectedItems);
-    warehouseStatusEl.textContent = warehouseAvailability.message;
-    warehouseStatusEl.classList.toggle('warehouse-warning', !warehouseAvailability.ok);
+    if (warehouseStatusEl) {
+        warehouseStatusEl.textContent = warehouseAvailability.message;
+        warehouseStatusEl.classList.toggle('warehouse-warning', !warehouseAvailability.ok);
+    }
 }
-
 
 function getDirectRecipeList(sheetName, items, qty) {
     const db = CRAFT_DATABASE[sheetName];
@@ -727,9 +716,7 @@ function getDeepFlatRecipeData(sheetName, items, qty) {
     let totals = {};
     
     function collect(itemName, multiplier, visited = new Set()) {
-        if (visited.has(itemName)) {
-            return;
-        }
+        if (visited.has(itemName)) return;
         visited.add(itemName);
 
         const recipe = db.RECIPES[itemName] || db.COMPONENTS[itemName];
@@ -785,11 +772,11 @@ function getWarehouseAvailability(sheetName, items) {
     if (missing.length === 0) {
         return { ok: true, message: 'На складі є всі необхідні інгредієнти.' };
     }
-
     return { ok: false, message: 'Недостатньо матеріалів: ' + missing.join('; ') };
 }
 
 function renderDeepRecipe(totals) {
+    if (!deepRecipeEl) return;
     deepRecipeEl.innerHTML = '';
     const inventory = buildWarehouseMap(categorySelect.value);
     let sortedResources = Object.keys(totals).sort((a, b) => a.localeCompare(b, 'uk'));
@@ -805,7 +792,7 @@ function renderDeepRecipe(totals) {
         const isEnough = available >= amount;
         const availabilityText = available > 0 ? `на складі ${available}` : 'на складі немає';
         
-        if (prices[res] > 0 || prices[res] === 0 && prices.hasOwnProperty(res)) {
+        if (prices.hasOwnProperty(res)) {
             li.innerHTML = `
                 <span class="res-name">• ${res}: ${formattedAmount} шт.</span>
                 <span class="res-cost">$${lineTotal.toFixed(2)}</span>
@@ -823,16 +810,13 @@ function renderDeepRecipe(totals) {
 }
 
 function getDeepCost(sheetName, name, pricesObj, missing, visited = new Set()) {
-    if (visited.has(name)) {
-        return 0;
-    }
+    if (visited.has(name)) return 0;
     visited.add(name);
 
-    if (pricesObj.hasOwnProperty(name) && pricesObj[name] > 0) return pricesObj[name];
-    if (pricesObj.hasOwnProperty(name) && pricesObj[name] === 0) return 0; 
+    if (pricesObj.hasOwnProperty(name)) return pricesObj[name];
     
     const db = CRAFT_DATABASE[sheetName];
-    const recipe = db.RECIPES[name] || db.COMPONENTS[name];
+    const recipe = db?.RECIPES[name] || db?.COMPONENTS[name];
     
     if (recipe) {
         let sum = 0;
@@ -848,6 +832,5 @@ function getDeepCost(sheetName, name, pricesObj, missing, visited = new Set()) {
     }
     return 0;
 }
-
 
 document.addEventListener('DOMContentLoaded', init);
