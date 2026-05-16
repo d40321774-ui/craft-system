@@ -46,6 +46,9 @@ html, body {
 }
 
 body {
+    -webkit-user-select: none; /* Для Safari */
+    -ms-user-select: none;     /* Для старих версій IE/Edge */
+    user-select: none;         /* Стандартна властивість */
     font-family: var(--font-body);
     background-color: var(--bg-color);
     color: var(--text-primary);
