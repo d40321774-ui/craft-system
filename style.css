@@ -962,7 +962,7 @@ body.theme-pharmacy .total-cost {
     padding: 1rem;
     color: var(--text-primary);
     font-family: var(--font-ui);
-    font-size: 0.95rem;
+    font-size: 10px;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
