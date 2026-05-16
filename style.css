@@ -355,7 +355,6 @@ input:checked + .slider:before {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    height: 700px;
 }
 
 .calc-panel, .results-panel {
