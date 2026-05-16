@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система Крафту</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kelly+Slab&family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="theme-weapon">
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-brand">Vellaro</div>
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="loading-bar"></div>
+        </div>
+        <div class="loading-text" id="loading-text">Ініціалізація системи...</div>
+    </div>
+    
+    <div class="background-overlay"></div>
+    <div class="container">
+        <header>
+            <h1>Система <span>Крафту</span></h1>
+            <p class="branding">Сім'ї Vellaro</p>
+            <p class="subtitle">Розрахунок ресурсів та собівартості</p>
+        </header>
+
+        
+        <div class="category-toggle-container">
+            <span class="toggle-label" id="label-weapon">Зброярня</span>
+            <label class="theme-switch">
+                <input type="checkbox" id="category-toggle">
+                <span class="slider"></span>
+            </label>
+            <span class="toggle-label" id="label-pharmacy">Аптека</span>
+            <button id="open-warehouse-modal" class="custom-btn warehouse-btn">СКЛАД</button>
+        </div>
+
+        <select id="category-select" hidden></select>
+
+        <main class="dashboard">
+            
+            <section class="panel glass calc-panel">
+                <div class="panel-header">
+                    <h2>Калькулятор</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>Вибір предметів</label>
+                        <button id="open-item-modal" class="custom-btn">Обрати предмети...</button>
+                        <select id="item-select" hidden></select>
+                        <div class="selected-items-list" id="selected-items-list">
+                            <span>Обрано:</span>
+                            <p class="selected-items-hint">Натисніть предмет у каталозі, щоб додати або зняти вибір. Для видалення предмета зі списку натисніть × праворуч від нього.</p>
+                            <p class="selected-items-hint">Якщо предмет уже обрано, натисніть кнопку «Зняти» у каталозі, щоб видалити його повністю.</p>
+                            <ul id="selected-items-ul">
+                                <li>немає</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            
+            <aside class="panel glass results-panel">
+                <div class="panel-header">
+                    <h2>Собівартість</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="results-container" id="results-container">
+                        <div class="cost-card">
+                            <h3>Загальна Вартість</h3>
+                            <div class="total-cost" id="total-cost">$0.00</div>
+                            <div class="missing-prices" id="missing-prices"></div>
+                            <div class="warehouse-status" id="warehouse-status"></div>
+                        </div>
+
+                        <div class="recipe-card">
+                            <h3>Прямий склад</h3>
+                            <p id="direct-recipe" class="recipe-text">-</p>
+                        </div>
+
+                        <div class="recipe-card">
+                            <h3>Повний склад (Собівартість)</h3>
+                            <ul id="deep-recipe" class="deep-recipe-list">
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    
+    <div id="item-modal" class="modal-overlay hidden">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h2>Каталог предметів</h2>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-item-grid">
+                <p class="selected-items-hint">Натисніть «Вибрати», щоб додати предмет до переліку. Якщо предмет уже обрано, натисніть «Зняти» — тоді його буде видалено повністю.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="warehouse-modal" class="modal-overlay hidden">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h2>Склад та рецепти</h2>
+                <button id="close-warehouse-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body warehouse-body">
+                <div class="warehouse-column">
+                    <div class="warehouse-section">
+                        <h3>Товари на складі</h3>
+                        <div class="warehouse-form">
+                            <input type="text" id="warehouse-item-name" class="custom-input" placeholder="Назва товару">
+                            <input type="number" id="warehouse-item-qty" class="custom-input" min="1" value="1" placeholder="Кількість">
+                            <button id="warehouse-add-item" class="custom-btn">Додати товар</button>
+                        </div>
+                        <ul id="warehouse-list" class="warehouse-list"></ul>
+                    </div>
+                </div>
+                <div class="warehouse-column">
+                    <div class="warehouse-section">
+                        <h3>Додати предмет</h3>
+                        <div class="warehouse-form">
+                            <p class="warehouse-note">Введіть назву предмета або матеріалу і кількість у формі зліва, потім натисніть «Додати товар».</p>
+                            <p class="warehouse-note">Наприклад: назва = <strong>Залізна руда</strong>, кількість = <strong>10</strong>.</p>
+                            <p class="warehouse-note">Щоб видалити предмет зі складу, натисніть кнопку <strong>Видалити</strong> у списку.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="warehouse-column">
+                    <div class="warehouse-section">
+                        <h3>Ціни на ресурси ($)</h3>
+                        <div id="price-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
