@@ -256,6 +256,21 @@ function init() {
 
 }
 
+// Заборона виділення тексту
+document.addEventListener('selectstart', (e) => {
+  e.preventDefault();
+});
+
+// Заборона копіювання (Ctrl+C / контекстне меню)
+document.addEventListener('copy', (e) => {
+  e.preventDefault();
+});
+
+// Додатково: заборона правого кліку миші, щоб не викликали меню "Копіювати"
+document.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+});
+
 function updateTheme() {
     const cat = categorySelect.value;
     if (cat === "Аптека") {
