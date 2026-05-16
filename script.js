@@ -256,20 +256,13 @@ function init() {
 
 }
 
-// Заборона виділення тексту
-document.addEventListener('selectstart', (e) => {
-  e.preventDefault();
-});
+/ Знаходимо головний контейнер (можна замінити на body або потрібний клас)
+const interfaceContainer = document.body; 
 
-// Заборона копіювання (Ctrl+C / контекстне меню)
-document.addEventListener('copy', (e) => {
-  e.preventDefault();
-});
-
-// Додатково: заборона правого кліку миші, щоб не викликали меню "Копіювати"
-document.addEventListener('contextmenu', (e) => {
-  e.preventDefault();
-});
+// Забороняємо виділення тексту через інлайнові стилі
+interfaceContainer.style.webkitUserSelect = "none";
+interfaceContainer.style.msUserSelect = "none";
+interfaceContainer.style.userSelect = "none";
 
 function updateTheme() {
     const cat = categorySelect.value;
