@@ -46,9 +46,6 @@ html, body {
 }
 
 body {
-    -webkit-user-select: none; /* Для Safari */
-    -ms-user-select: none;     /* Для старих версій IE/Edge */
-    user-select: none;         /* Стандартна властивість */
     font-family: var(--font-body);
     background-color: var(--bg-color);
     color: var(--text-primary);
@@ -962,7 +959,7 @@ body.theme-pharmacy .total-cost {
     padding: 1rem;
     color: var(--text-primary);
     font-family: var(--font-ui);
-    font-size: 10px;
+    font-size: 14rem;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
