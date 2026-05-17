@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Система Крафту</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%23c9a84a'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Kelly+Slab&family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body class="theme-weapon">
@@ -22,18 +23,18 @@
             <h1>Система <span>Крафту</span></h1>
             <p class="branding">Сім'ї Vellaro</p>
             <p class="subtitle">Розрахунок ресурсів та собівартості</p>
+            <div class="header-right">
+                <div class="category-toggle-container">
+                    <span class="toggle-label" id="label-weapon">Зброярня</span>
+                    <label class="theme-switch">
+                        <input type="checkbox" id="category-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label" id="label-pharmacy">Аптека</span>
+                    <button id="open-warehouse-modal" class="custom-btn warehouse-btn"><span class="warehouse-icon">▣</span>СКЛАД</button>
+                </div>
+            </div>
         </header>
-
-        
-        <div class="category-toggle-container">
-            <span class="toggle-label" id="label-weapon">Зброярня</span>
-            <label class="theme-switch">
-                <input type="checkbox" id="category-toggle">
-                <span class="slider"></span>
-            </label>
-            <span class="toggle-label" id="label-pharmacy">Аптека</span>
-            <button id="open-warehouse-modal" class="custom-btn warehouse-btn">СКЛАД</button>
-        </div>
 
         <select id="category-select" hidden></select>
 
@@ -120,7 +121,22 @@
                             <input type="number" id="warehouse-item-qty" class="custom-input" min="1" value="1" placeholder="Кількість">
                             <button id="warehouse-add-item" class="custom-btn">Додати товар</button>
                         </div>
-                        <ul id="warehouse-list" class="warehouse-list"></ul>
+                        <div class="warehouse-controls">
+                            <input type="search" id="warehouse-search" class="custom-input" placeholder="Пошук на складі...">
+                        </div>
+                        <div class="warehouse-table-wrap">
+                            <table id="warehouse-table" class="warehouse-table" aria-label="Склад товарів">
+                                <thead>
+                                    <tr>
+                                        <th>Назва</th>
+                                        <th>Кількість</th>
+                                        <th>Дії</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="warehouse-column">
@@ -146,3 +162,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
